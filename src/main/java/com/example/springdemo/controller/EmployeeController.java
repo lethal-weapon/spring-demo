@@ -64,4 +64,9 @@ public class EmployeeController {
     throw new IllegalStateException("Given employee cannot be updated.");
   }
 
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteEmployee(@PathVariable long id) {
+    repo.deleteById(id);
+  }
 }
