@@ -54,12 +54,30 @@ public class EmployeeRepository {
     return employee;
   }
 
+  public boolean updateEmployee(Employee employee) {
+    if (deleteById(employee.getId())) {
+      employees.add(employee);
+      employees.sort((e1, e2) -> (int) (e1.getId() - e2.getId()));
+      return true;
+    }
+    return false;
+  }
+
+  public boolean deleteById(long id) {
+    Employee employee = findById(id);
+    if (employee != null) {
+      employees.remove(employee);
+      return true;
+    }
+    return false;
+  }
+
   private long generateNewId() {
     long max = employees
       .stream()
       .map(Employee::getId)
       .max(Long::compareTo)
-      .orElse(1L);
+      .orElse(0L);
 
     return max + 1;
   }

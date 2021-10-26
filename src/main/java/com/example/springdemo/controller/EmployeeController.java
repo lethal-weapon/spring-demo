@@ -44,4 +44,24 @@ public class EmployeeController {
     return repo.addNewEmployee(unsaved);
   }
 
+  @PutMapping("/{id}")
+  public Employee updateEmployee(@PathVariable long id,
+                                 @RequestBody Employee updated) {
+
+    if (updated.getId() == null) {
+      throw new IllegalStateException("Given employee's ID doesn't exist.");
+    }
+    if (!updated.getId().equals(id)) {
+      throw new IllegalStateException("Given employee's ID doesn't match the one in the path.");
+    }
+    if (repo.findById(id) == null) {
+      throw new IllegalStateException("Given employee doesn't exist.");
+    }
+
+    if (repo.updateEmployee(updated)) {
+      return updated;
+    }
+    throw new IllegalStateException("Given employee cannot be updated.");
+  }
+
 }
