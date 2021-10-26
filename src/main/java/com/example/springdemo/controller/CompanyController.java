@@ -2,6 +2,7 @@ package com.example.springdemo.controller;
 
 import com.example.springdemo.data.CompanyRepository;
 import com.example.springdemo.domain.Company;
+import com.example.springdemo.domain.Employee;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,15 @@ public class CompanyController {
   @GetMapping("/{id}")
   public Company getById(@PathVariable long id) {
     return repo.findById(id);
+  }
+
+  @GetMapping("/{id}/employees")
+  public List<Employee> getAllEmployeesByCompanyId(@PathVariable long id) {
+    Company company = repo.findById(id);
+    if (company != null) {
+      return company.getEmployees();
+    }
+    throw new IllegalStateException("Company doesn't exist.");
   }
 
   @GetMapping(params = {"page", "pageSize"})
