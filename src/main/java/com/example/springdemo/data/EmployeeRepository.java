@@ -47,4 +47,20 @@ public class EmployeeRepository {
       .limit(pageSize)
       .collect(Collectors.toList());
   }
+
+  public Employee addNewEmployee(Employee employee) {
+    employee.setId(generateNewId());
+    employees.add(employee);
+    return employee;
+  }
+
+  private long generateNewId() {
+    long max = employees
+      .stream()
+      .map(Employee::getId)
+      .max(Long::compareTo)
+      .orElse(1L);
+
+    return max + 1;
+  }
 }

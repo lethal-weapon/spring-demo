@@ -2,6 +2,7 @@ package com.example.springdemo.controller;
 
 import com.example.springdemo.data.EmployeeRepository;
 import com.example.springdemo.domain.Employee;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,12 @@ public class EmployeeController {
   public List<Employee> getByPage(@RequestParam long page,
                                   @RequestParam long pageSize) {
     return repo.findByPaging(page, pageSize);
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public Employee createEmployee(@RequestBody Employee unsaved) {
+    return repo.addNewEmployee(unsaved);
   }
 
 }
