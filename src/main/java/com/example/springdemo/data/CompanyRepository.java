@@ -22,12 +22,12 @@ public class CompanyRepository {
       new Company(3L, "BMW"),
       new Company(4L, "Hitachi")
     ));
-    companies.get(0).addEmployees(Arrays.asList(
-      new Employee(1L, "sean", 23, "male", 11111.00d),
-      new Employee(2L, "wing", 22, "female", 22222.00d),
-      new Employee(3L, "allen", 35, "male", 33333.00d),
-      new Employee(4L, "steve", 65, "male", 99999.99d)
-    ));
+//    companies.get(0).addEmployees(Arrays.asList(
+//      new Employee(1L, "sean", 23, "male", 11111.00d),
+//      new Employee(2L, "wing", 22, "female", 22222.00d),
+//      new Employee(3L, "allen", 35, "male", 33333.00d),
+//      new Employee(4L, "steve", 65, "male", 99999.99d)
+//    ));
   }
 
   public List<Company> findAll() {
