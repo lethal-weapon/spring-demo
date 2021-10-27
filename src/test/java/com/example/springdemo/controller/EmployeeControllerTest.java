@@ -159,7 +159,28 @@ class EmployeeControllerTest {
 
   @Test
   void shouldUpdateEmployeeWhenPutGivenAnUpdatedEmployee() throws Exception {
+    Employee unsaved = new Employee("jason", 32, "Male", 34500.00d);
+    Employee updated = repo.addNewEmployee(unsaved);
+    updated.setAge(33);
+    updated.setGender("Female");
+    updated.setSalary(36000.00d);
+    String url = String.format("/employees/%d", updated.getId());
 
+    ResultActions result = mock.perform(
+      put(url)
+        .contentType(APPLICATION_JSON)
+        .content(jsonMapper.writeValueAsString(updated))
+    );
+
+    result
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$").isNotEmpty())
+      .andExpect(jsonPath("$.id").value(updated.getId()))
+      .andExpect(jsonPath("$.name").value(updated.getName()))
+      .andExpect(jsonPath("$.age").value(updated.getAge()))
+      .andExpect(jsonPath("$.gender").value(updated.getGender()))
+      .andExpect(jsonPath("$.salary").value(updated.getSalary()))
+    ;
   }
 
 }
