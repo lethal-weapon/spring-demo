@@ -57,6 +57,7 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$[1].age").value(saved2.getAge()))
       .andExpect(jsonPath("$[1].gender").value(saved2.getGender()))
       .andExpect(jsonPath("$[1].salary").value(saved2.getSalary()))
+      .andExpect(jsonPath("$[2]").doesNotExist())
     ;
   }
 
@@ -80,7 +81,7 @@ class EmployeeControllerTest {
   }
 
   @Test
-  void shouldReturnEmployeesWithSameGenderWhenGetByGenderGivenGender() throws Exception {
+  void shouldReturnEmployeesWithSameGenderWhenGetByGender() throws Exception {
     Employee unsaved1 = new Employee("tom", 18, "Male", 17500.00d);
     Employee unsaved2 = new Employee("jen", 25, "Female", 29000.00d);
     Employee unsaved3 = new Employee("sofia", 31, "Female", 45000.00d);
@@ -105,6 +106,7 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$[1].age").value(saved3.getAge()))
       .andExpect(jsonPath("$[1].gender").value(saved3.getGender()))
       .andExpect(jsonPath("$[1].salary").value(saved3.getSalary()))
+      .andExpect(jsonPath("$[2]").doesNotExist())
     ;
   }
 
@@ -129,6 +131,7 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$[0].age").value(saved3.getAge()))
       .andExpect(jsonPath("$[0].gender").value(saved3.getGender()))
       .andExpect(jsonPath("$[0].salary").value(saved3.getSalary()))
+      .andExpect(jsonPath("$[1]").doesNotExist())
     ;
   }
 
@@ -155,7 +158,7 @@ class EmployeeControllerTest {
   }
 
   @Test
-  void shouldUpdateEmployeeWhenPutGivenAnEmployee() throws Exception {
+  void shouldUpdateEmployeeWhenPutGivenAnUpdatedEmployee() throws Exception {
 
   }
 
