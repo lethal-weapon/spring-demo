@@ -72,7 +72,7 @@ class EmployeeServiceTest {
       new Employee("Fred", 29, "Male", 23500.00d),
       new Employee("Linda", 26, "Female", 21100.00d)
     );
-    List<Employee> page2 = Arrays.asList(
+    List<Employee> page2 = List.of(
       new Employee("Sammy", 23, "Female", 42132.00d)
     );
     given(repo.findByPaging(0, 2)).willReturn(page1);
@@ -83,6 +83,22 @@ class EmployeeServiceTest {
 
     assertIterableEquals(page1, actualPage1);
     assertIterableEquals(page2, actualPage2);
+  }
+
+  @Test
+  void shouldCreateEmployeeWhenAddNewEmployee() {
+    Employee unsaved = new Employee("Linda", 26, "Female", 21100.00d);
+    Employee mock = new Employee("Linda", 26, "Female", 21100.00d);
+    mock.setId(4322L);
+    given(repo.addNewEmployee(any(Employee.class))).willReturn(mock);
+
+    Employee actual = service.addNewEmployee(mock);
+
+    assertNotNull(actual.getId());
+    assertEquals(unsaved.getName(), actual.getName());
+    assertEquals(unsaved.getAge(), actual.getAge());
+    assertEquals(unsaved.getGender(), actual.getGender());
+    assertEquals(unsaved.getSalary(), actual.getSalary());
   }
 
 
