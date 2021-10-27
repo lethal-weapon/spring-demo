@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -183,4 +184,19 @@ class EmployeeControllerTest {
     ;
   }
 
+  @Test
+  void shouldDeleteEmployeeWhenGivenAnEmployeeId() throws Exception {
+    Employee unsaved = new Employee("jason", 32, "Male", 34500.00d);
+    Employee saved = repo.addNewEmployee(unsaved);
+    String url = String.format("/employees/%d", saved.getId());
+
+    assertEquals(1, repo.findAll().size());
+    ResultActions result = mock.perform(delete(url));
+    assertEquals(0, repo.findAll().size());
+
+    result
+      .andExpect(status().isNoContent())
+      .andExpect(jsonPath("$").doesNotExist())
+    ;
+  }
 }
