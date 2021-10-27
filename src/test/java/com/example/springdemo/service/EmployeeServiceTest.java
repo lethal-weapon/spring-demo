@@ -41,7 +41,7 @@ class EmployeeServiceTest {
   void shouldReturnOneEmployeeWhenFindById() {
     Employee employee = new Employee("Jerry", 24, "Male", 17521.00d);
     employee.setId(4342L);
-    given(repo.findById(4342L)).willReturn(employee);
+    given(repo.findById(employee.getId())).willReturn(employee);
 
     Employee actual = repo.findById(4342);
 
@@ -88,11 +88,11 @@ class EmployeeServiceTest {
   @Test
   void shouldCreateEmployeeWhenAddNewEmployee() {
     Employee unsaved = new Employee("Linda", 26, "Female", 21100.00d);
-    Employee mock = new Employee("Linda", 26, "Female", 21100.00d);
-    mock.setId(4322L);
-    given(repo.addNewEmployee(any(Employee.class))).willReturn(mock);
+    Employee saved = new Employee("Linda", 26, "Female", 21100.00d);
+    saved.setId(4322L);
+    given(repo.addNewEmployee(any(Employee.class))).willReturn(saved);
 
-    Employee actual = service.addNewEmployee(mock);
+    Employee actual = service.addNewEmployee(unsaved);
 
     assertNotNull(actual.getId());
     assertEquals(unsaved.getName(), actual.getName());
@@ -101,5 +101,23 @@ class EmployeeServiceTest {
     assertEquals(unsaved.getSalary(), actual.getSalary());
   }
 
+  @Test
+  void shouldUpdateEmployeeWhenGivenAnUpdatedEmployee() {
+    Employee updated = new Employee("Linda", 26, "Female", 21100.00d);
+    updated.setId(4322L);
+    given(repo.updateEmployee(any(Employee.class))).willReturn(true);
 
+    boolean actual = service.updateEmployee(updated);
+
+    assertTrue(actual);
+  }
+
+  @Test
+  void shouldDeleteEmployeeWhenDeleteByEmployeeId() {
+    given(repo.findById(anyLong())).willReturn(null);
+
+    Employee actual = repo.findById(4342L);
+
+    assertNull(actual);
+  }
 }
