@@ -66,6 +66,10 @@ public class EmployeeRepository {
     return false;
   }
 
+  public void deleteAll() {
+    employees.clear();
+  }
+
   private long generateNewId() {
     long max = employees
       .stream()
@@ -74,9 +78,5 @@ public class EmployeeRepository {
       .orElse(0L);
 
     return max + 1;
-  }
-
-  public void deleteAll() {
-    employees.clear();
   }
 }
