@@ -5,20 +5,18 @@ import com.example.springdemo.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
 
-  private EmployeeService service;
+  private final EmployeeService service;
 
   public EmployeeController(EmployeeService service) {
     this.service = service;
   }
 
   @GetMapping
-  public List<Employee> getAll() {
+  public Iterable<Employee> getAll() {
     return service.findAll();
   }
 
@@ -28,13 +26,13 @@ public class EmployeeController {
   }
 
   @GetMapping(params = "gender")
-  public List<Employee> getByGender(@RequestParam String gender) {
+  public Iterable<Employee> getByGender(@RequestParam String gender) {
     return service.findByGender(gender);
   }
 
   @GetMapping(params = {"page", "pageSize"})
-  public List<Employee> getByPage(@RequestParam long page,
-                                  @RequestParam long pageSize) {
+  public Iterable<Employee> getByPage(@RequestParam int page,
+                                      @RequestParam int pageSize) {
     return service.findByPaging(page, pageSize);
   }
 
@@ -47,21 +45,7 @@ public class EmployeeController {
   @PutMapping("/{id}")
   public Employee updateEmployee(@PathVariable long id,
                                  @RequestBody Employee updated) {
-
-    if (updated.getId() == null) {
-      throw new IllegalStateException("Given employee's ID doesn't exist.");
-    }
-    if (!updated.getId().equals(id)) {
-      throw new IllegalStateException("Given employee's ID doesn't match the one in the path.");
-    }
-    if (service.findById(id) == null) {
-      throw new IllegalStateException("Given employee doesn't exist.");
-    }
-
-    if (service.updateEmployee(updated)) {
-      return updated;
-    }
-    throw new IllegalStateException("Given employee cannot be updated.");
+    return service.updateEmployee(id, updated);
   }
 
   @DeleteMapping("/{id}")
