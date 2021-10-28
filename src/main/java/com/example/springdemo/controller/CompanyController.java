@@ -1,77 +1,57 @@
 package com.example.springdemo.controller;
 
-import com.example.springdemo.data.CompanyRepository;
+import com.example.springdemo.service.CompanyService;
 import com.example.springdemo.domain.Company;
 import com.example.springdemo.domain.Employee;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/companies")
 public class CompanyController {
 
-  private CompanyRepository repo;
+  private final CompanyService service;
 
-  public CompanyController(CompanyRepository repo) {
-    this.repo = repo;
+  public CompanyController(CompanyService service) {
+    this.service = service;
   }
 
   @GetMapping
-  public List<Company> getAll() {
-    return repo.findAll();
+  public Iterable<Company> getAll() {
+    return service.findAll();
   }
 
   @GetMapping("/{id}")
   public Company getById(@PathVariable long id) {
-    return repo.findById(id);
+    return service.findById(id);
   }
 
   @GetMapping("/{id}/employees")
-  public List<Employee> getAllEmployeesByCompanyId(@PathVariable long id) {
-    Company company = repo.findById(id);
-    if (company != null) {
-      return company.getEmployees();
-    }
-    throw new IllegalStateException("Company doesn't exist.");
+  public Iterable<Employee> getAllEmployeesByCompanyId(@PathVariable long id) {
+    return service.findAllEmployeesByCompanyId(id);
   }
 
   @GetMapping(params = {"page", "pageSize"})
-  public List<Company> getByPage(@RequestParam long page,
-                                 @RequestParam long pageSize) {
-    return repo.findByPaging(page, pageSize);
+  public Iterable<Company> getByPage(@RequestParam int page,
+                                     @RequestParam int pageSize) {
+    return service.findByPaging(page, pageSize);
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Company createCompany(@RequestBody Company unsaved) {
-    return repo.addNewCompany(unsaved);
+    return service.addNewCompany(unsaved);
   }
 
   @PutMapping("/{id}")
   public Company updateCompany(@PathVariable long id,
                                @RequestBody Company updated) {
-
-    if (updated.getId() == null) {
-      throw new IllegalStateException("Given company's ID doesn't exist.");
-    }
-    if (!updated.getId().equals(id)) {
-      throw new IllegalStateException("Given company's ID doesn't match the one in the path.");
-    }
-    if (repo.findById(id) == null) {
-      throw new IllegalStateException("Given company doesn't exist.");
-    }
-
-    if (repo.updateCompany(updated)) {
-      return updated;
-    }
-    throw new IllegalStateException("Given company cannot be updated.");
+    return service.updateCompany(id, updated);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteCompany(@PathVariable long id) {
-    repo.deleteById(id);
+    service.deleteById(id);
   }
 }
