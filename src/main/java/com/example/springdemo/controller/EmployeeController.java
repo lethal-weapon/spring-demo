@@ -1,6 +1,9 @@
 package com.example.springdemo.controller;
 
 import com.example.springdemo.domain.Employee;
+import com.example.springdemo.dto.EmployeeRequest;
+import com.example.springdemo.dto.EmployeeResponse;
+import com.example.springdemo.mapper.EmployeeMapper;
 import com.example.springdemo.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeeController {
 
   private final EmployeeService service;
+  private final EmployeeMapper mapper;
 
-  public EmployeeController(EmployeeService service) {
+  public EmployeeController(EmployeeService service,
+                            EmployeeMapper mapper) {
     this.service = service;
+    this.mapper = mapper;
   }
 
   @GetMapping
@@ -38,8 +44,10 @@ public class EmployeeController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Employee createEmployee(@RequestBody Employee unsaved) {
-    return service.addNewEmployee(unsaved);
+  public EmployeeResponse createEmployee(@RequestBody EmployeeRequest request) {
+    Employee unsaved = mapper.toEntity(request);
+    Employee saved = service.addNewEmployee(unsaved);
+    return mapper.fromEntity(saved);
   }
 
   @PutMapping("/{id}")

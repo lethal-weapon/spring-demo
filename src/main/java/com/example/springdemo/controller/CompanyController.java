@@ -1,5 +1,8 @@
 package com.example.springdemo.controller;
 
+import com.example.springdemo.dto.CompanyRequest;
+import com.example.springdemo.dto.CompanyResponse;
+import com.example.springdemo.mapper.CompanyMapper;
 import com.example.springdemo.service.CompanyService;
 import com.example.springdemo.domain.Company;
 import com.example.springdemo.domain.Employee;
@@ -11,9 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
 
   private final CompanyService service;
+  private final CompanyMapper mapper;
 
-  public CompanyController(CompanyService service) {
+  public CompanyController(CompanyService service,
+                           CompanyMapper mapper) {
     this.service = service;
+    this.mapper = mapper;
   }
 
   @GetMapping
@@ -39,8 +45,10 @@ public class CompanyController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Company createCompany(@RequestBody Company unsaved) {
-    return service.addNewCompany(unsaved);
+  public CompanyResponse createCompany(@RequestBody CompanyRequest request) {
+    Company unsaved = mapper.toEntity(request);
+    Company saved = service.addNewCompany(unsaved);
+    return mapper.fromEntity(saved);
   }
 
   @PutMapping("/{id}")

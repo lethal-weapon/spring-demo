@@ -19,8 +19,8 @@ public class DevelopmentConfig {
   public CommandLineRunner loadData(EmployeeRepository employeeRepo,
                                     CompanyRepository companyRepo) {
     return args -> {
-      employeeRepo.deleteAll();
       companyRepo.deleteAll();
+      employeeRepo.deleteAll();
 
       Employee employeeA = new Employee("Alex", 33, "Male", 21500.00d);
       Employee employeeB = new Employee("James", 27, "Male", 18234.45d);
