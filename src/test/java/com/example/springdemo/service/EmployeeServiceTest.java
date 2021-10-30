@@ -42,9 +42,9 @@ class EmployeeServiceTest {
   void shouldReturnOneEmployeeWhenFindById() {
     Employee employee = new Employee("Jerry", 24, "Male", 17521.00d);
     employee.setId(4342L);
-    given(repo.findById(employee.getId())).willReturn(Optional.of(employee));
+    given(repo.findById(anyLong())).willReturn(Optional.of(employee));
 
-    Employee actual = repo.findById(4342L).orElse(null);
+    Employee actual = service.findById(employee.getId());
 
     assertSame(employee, actual);
   }
@@ -58,32 +58,13 @@ class EmployeeServiceTest {
     );
     List<Employee> femaleEmployees = employees
       .stream()
-      .filter(e -> e.getGender().equals("Female"))
+      .filter(e -> e.getGender().equalsIgnoreCase("Female"))
       .collect(Collectors.toList());
     given(repo.findAllByGenderIgnoreCase("Female")).willReturn(femaleEmployees);
 
-    Iterable<Employee> actual = service.findByGender("Female");
+    List<Employee> actual = service.findByGender("Female");
 
     assertIterableEquals(femaleEmployees, actual);
-  }
-
-  @Test
-  void shouldReturnPagedEmployeesWhenFindByPagingGivenPageAndPageSize() {
-//    List<Employee> page1 = Arrays.asList(
-//      new Employee("Fred", 29, "Male", 23500.00d),
-//      new Employee("Linda", 26, "Female", 21100.00d)
-//    );
-//    List<Employee> page2 = List.of(
-//      new Employee("Sammy", 23, "Female", 42132.00d)
-//    );
-//    given(repo.findAll(PageRequest.of(0, 2))).willReturn((Page<Employee>) page1);
-//    given(repo.findAll(PageRequest.of(1, 2))).willReturn((Page<Employee>) page2);
-//
-//    Iterable<Employee> actualPage1 = service.findByPaging(0, 2);
-//    Iterable<Employee> actualPage2 = service.findByPaging(1, 2);
-//
-//    assertIterableEquals(page1, actualPage1);
-//    assertIterableEquals(page2, actualPage2);
   }
 
   @Test
@@ -111,10 +92,20 @@ class EmployeeServiceTest {
 
     Employee actual = service.updateEmployee(updated.getId(), updated);
 
-    assertEquals(4322L, actual.getId());
-    assertEquals("Linda", actual.getName());
-    assertEquals(26, actual.getAge());
-    assertEquals("Female", actual.getGender());
-    assertEquals(21100.00d, actual.getSalary());
+    assertEquals(updated.getId(), actual.getId());
+    assertEquals(updated.getName(), actual.getName());
+    assertEquals(updated.getAge(), actual.getAge());
+    assertEquals(updated.getGender(), actual.getGender());
+    assertEquals(updated.getSalary(), actual.getSalary());
+  }
+
+  @Test
+  void shouldDeleteEmployeeWhenGivenAnEmployeeId() {
+    willDoNothing().given(repo).deleteById(anyLong());
+
+    service.deleteById(123L);
+
+    verify(repo).deleteById(anyLong());
+    verifyNoMoreInteractions(repo);
   }
 }
