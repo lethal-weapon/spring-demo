@@ -5,6 +5,7 @@ import com.example.springdemo.domain.Employee;
 import com.example.springdemo.exception.EmployeeNotFoundException;
 import com.example.springdemo.exception.EntityIdNotExistedException;
 import com.example.springdemo.exception.EntityIdNotMatchException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -34,12 +35,12 @@ public class EmployeeService {
     return repo.findAllByGenderIgnoreCase(gender);
   }
 
-  public List<Employee> findByPaging(int page,
+  public Page<Employee> findByPaging(int page,
                                      int pageSize) {
     PageRequest pageable = PageRequest
       .of(page, pageSize, Sort.by("id").ascending());
 
-    return repo.findAll(pageable).getContent();
+    return repo.findAll(pageable);
   }
 
   public Employee addNewEmployee(Employee unsaved) {

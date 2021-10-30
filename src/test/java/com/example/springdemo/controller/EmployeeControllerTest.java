@@ -125,13 +125,14 @@ class EmployeeControllerTest {
     result
       .andExpect(status().isOk())
       .andExpect(jsonPath("$").isNotEmpty())
-      .andExpect(jsonPath("$").isArray())
-      .andExpect(jsonPath("$[0].id").value(saved3.getId()))
-      .andExpect(jsonPath("$[0].name").value(saved3.getName()))
-      .andExpect(jsonPath("$[0].age").value(saved3.getAge()))
-      .andExpect(jsonPath("$[0].gender").value(saved3.getGender()))
-      .andExpect(jsonPath("$[0].salary").doesNotExist())
-      .andExpect(jsonPath("$[1]").doesNotExist())
+      .andExpect(jsonPath("$.content").isNotEmpty())
+      .andExpect(jsonPath("$.content").isArray())
+      .andExpect(jsonPath("$.content[0].id").value(saved3.getId()))
+      .andExpect(jsonPath("$.content[0].name").value(saved3.getName()))
+      .andExpect(jsonPath("$.content[0].age").value(saved3.getAge()))
+      .andExpect(jsonPath("$.content[0].gender").value(saved3.getGender()))
+      .andExpect(jsonPath("$.content[0].salary").doesNotExist())
+      .andExpect(jsonPath("$.content[1]").doesNotExist())
     ;
   }
 

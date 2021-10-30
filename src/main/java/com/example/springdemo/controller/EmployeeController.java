@@ -5,6 +5,7 @@ import com.example.springdemo.dto.EmployeeRequest;
 import com.example.springdemo.dto.EmployeeResponse;
 import com.example.springdemo.mapper.EmployeeMapper;
 import com.example.springdemo.service.EmployeeService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,7 @@ public class EmployeeController {
   }
 
   @GetMapping(params = {"page", "pageSize"})
-  public List<EmployeeResponse> getByPage(@RequestParam int page,
+  public Page<EmployeeResponse> getByPage(@RequestParam int page,
                                           @RequestParam int pageSize) {
     return toResponse(
       service.findByPaging(page, pageSize)
@@ -81,5 +82,9 @@ public class EmployeeController {
       .stream()
       .map(mapper::fromEntity)
       .collect(Collectors.toList());
+  }
+
+  private Page<EmployeeResponse> toResponse(Page<Employee> employees) {
+    return employees.map(mapper::fromEntity);
   }
 }
