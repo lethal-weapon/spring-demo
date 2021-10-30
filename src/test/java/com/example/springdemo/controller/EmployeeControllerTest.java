@@ -43,7 +43,7 @@ class EmployeeControllerTest {
   }
 
   @Test
-  void shouldReturnAllEmployeesWhenGetAllGivenMultipleEmployees() throws Exception {
+  void shouldReturnAllEmployeesWithoutSalaryWhenGetAllGivenMultipleEmployees() throws Exception {
     Employee saved1 = repo.save(new Employee("Tom", 18, "Male", 17500.00d));
     Employee saved2 = repo.save(new Employee("Jen", 25, "Female", 29000.50d));
     String url = String.format("%s", BASE_URL);
@@ -58,18 +58,18 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$[0].name").value(saved1.getName()))
       .andExpect(jsonPath("$[0].age").value(saved1.getAge()))
       .andExpect(jsonPath("$[0].gender").value(saved1.getGender()))
-      .andExpect(jsonPath("$[0].salary").value(saved1.getSalary()))
+      .andExpect(jsonPath("$[0].salary").doesNotExist())
       .andExpect(jsonPath("$[1].id").value(saved2.getId()))
       .andExpect(jsonPath("$[1].name").value(saved2.getName()))
       .andExpect(jsonPath("$[1].age").value(saved2.getAge()))
       .andExpect(jsonPath("$[1].gender").value(saved2.getGender()))
-      .andExpect(jsonPath("$[1].salary").value(saved2.getSalary()))
+      .andExpect(jsonPath("$[1].salary").doesNotExist())
       .andExpect(jsonPath("$[2]").doesNotExist())
     ;
   }
 
   @Test
-  void shouldReturnOneEmployeeWhenGetOneGivenSingleEmployee() throws Exception {
+  void shouldReturnOneEmployeeWithoutSalaryWhenGetOneGivenSingleEmployee() throws Exception {
     Employee saved = repo.save(new Employee("Jason", 32, "Male", 34500.00d));
     String url = String.format("%s/%d", BASE_URL, saved.getId());
 
@@ -82,12 +82,12 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$.name").value(saved.getName()))
       .andExpect(jsonPath("$.age").value(saved.getAge()))
       .andExpect(jsonPath("$.gender").value(saved.getGender()))
-      .andExpect(jsonPath("$.salary").value(saved.getSalary()))
+      .andExpect(jsonPath("$.salary").doesNotExist())
     ;
   }
 
   @Test
-  void shouldReturnEmployeesWithSameGenderWhenGetByGender() throws Exception {
+  void shouldReturnEmployeesWithSameGenderWithoutSalaryWhenGetByGender() throws Exception {
     Employee saved1 = repo.save(new Employee("Tom", 18, "Male", 17500.00d));
     Employee saved2 = repo.save(new Employee("Jen", 25, "Female", 29000.00d));
     Employee saved3 = repo.save(new Employee("Sofia", 31, "Female", 45000.00d));
@@ -103,12 +103,12 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$[0].name").value(saved2.getName()))
       .andExpect(jsonPath("$[0].age").value(saved2.getAge()))
       .andExpect(jsonPath("$[0].gender").value(saved2.getGender()))
-      .andExpect(jsonPath("$[0].salary").value(saved2.getSalary()))
+      .andExpect(jsonPath("$[0].salary").doesNotExist())
       .andExpect(jsonPath("$[1].id").value(saved3.getId()))
       .andExpect(jsonPath("$[1].name").value(saved3.getName()))
       .andExpect(jsonPath("$[1].age").value(saved3.getAge()))
       .andExpect(jsonPath("$[1].gender").value(saved3.getGender()))
-      .andExpect(jsonPath("$[1].salary").value(saved3.getSalary()))
+      .andExpect(jsonPath("$[1].salary").doesNotExist())
       .andExpect(jsonPath("$[2]").doesNotExist())
     ;
   }
@@ -130,7 +130,7 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$[0].name").value(saved3.getName()))
       .andExpect(jsonPath("$[0].age").value(saved3.getAge()))
       .andExpect(jsonPath("$[0].gender").value(saved3.getGender()))
-      .andExpect(jsonPath("$[0].salary").value(saved3.getSalary()))
+      .andExpect(jsonPath("$[0].salary").doesNotExist())
       .andExpect(jsonPath("$[1]").doesNotExist())
     ;
   }
@@ -155,7 +155,7 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$.name").value(unsaved.getName()))
       .andExpect(jsonPath("$.age").value(unsaved.getAge()))
       .andExpect(jsonPath("$.gender").value(unsaved.getGender()))
-      .andExpect(jsonPath("$.salary").value(unsaved.getSalary()))
+      .andExpect(jsonPath("$.salary").doesNotExist())
     ;
   }
 
@@ -182,7 +182,7 @@ class EmployeeControllerTest {
       .andExpect(jsonPath("$.name").value(updated.getName()))
       .andExpect(jsonPath("$.age").value(updated.getAge()))
       .andExpect(jsonPath("$.gender").value(updated.getGender()))
-      .andExpect(jsonPath("$.salary").value(updated.getSalary()))
+      .andExpect(jsonPath("$.salary").doesNotExist())
     ;
   }
 
