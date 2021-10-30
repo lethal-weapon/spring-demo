@@ -8,6 +8,9 @@ import com.example.springdemo.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -22,24 +25,32 @@ public class EmployeeController {
   }
 
   @GetMapping
-  public Iterable<Employee> getAll() {
-    return service.findAll();
+  public List<EmployeeResponse> getAll() {
+    return toResponse(
+      service.findAll()
+    );
   }
 
   @GetMapping("/{id}")
-  public Employee getById(@PathVariable long id) {
-    return service.findById(id);
+  public EmployeeResponse getById(@PathVariable long id) {
+    return mapper.fromEntity(
+      service.findById(id)
+    );
   }
 
   @GetMapping(params = "gender")
-  public Iterable<Employee> getByGender(@RequestParam String gender) {
-    return service.findByGender(gender);
+  public List<EmployeeResponse> getByGender(@RequestParam String gender) {
+    return toResponse(
+      service.findByGender(gender)
+    );
   }
 
   @GetMapping(params = {"page", "pageSize"})
-  public Iterable<Employee> getByPage(@RequestParam int page,
-                                      @RequestParam int pageSize) {
-    return service.findByPaging(page, pageSize);
+  public List<EmployeeResponse> getByPage(@RequestParam int page,
+                                          @RequestParam int pageSize) {
+    return toResponse(
+      service.findByPaging(page, pageSize)
+    );
   }
 
   @PostMapping
@@ -51,14 +62,24 @@ public class EmployeeController {
   }
 
   @PutMapping("/{id}")
-  public Employee updateEmployee(@PathVariable long id,
-                                 @RequestBody Employee updated) {
-    return service.updateEmployee(id, updated);
+  public EmployeeResponse updateEmployee(@PathVariable long id,
+                                         @RequestBody EmployeeRequest request) {
+    Employee updated = mapper.toEntity(request);
+    return mapper.fromEntity(
+      service.updateEmployee(id, updated)
+    );
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteEmployee(@PathVariable long id) {
     service.deleteById(id);
+  }
+
+  private List<EmployeeResponse> toResponse(List<Employee> employees) {
+    return employees
+      .stream()
+      .map(mapper::fromEntity)
+      .collect(Collectors.toList());
   }
 }

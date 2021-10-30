@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeService {
 
@@ -18,8 +20,8 @@ public class EmployeeService {
     this.repo = repo;
   }
 
-  public Iterable<Employee> findAll() {
-    return repo.findAll();
+  public List<Employee> findAll() {
+    return (List<Employee>) repo.findAll();
   }
 
   public Employee findById(long id) {
@@ -28,12 +30,12 @@ public class EmployeeService {
       .orElseThrow(EmployeeNotFoundException::new);
   }
 
-  public Iterable<Employee> findByGender(String gender) {
+  public List<Employee> findByGender(String gender) {
     return repo.findAllByGenderIgnoreCase(gender);
   }
 
-  public Iterable<Employee> findByPaging(int page,
-                                         int pageSize) {
+  public List<Employee> findByPaging(int page,
+                                     int pageSize) {
     PageRequest pageable = PageRequest
       .of(page, pageSize, Sort.by("id").ascending());
 

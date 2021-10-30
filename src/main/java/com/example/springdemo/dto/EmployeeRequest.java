@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmployeeRequest {
 
+  private Long id;
   private String name;
   private Integer age;
   private String gender;
