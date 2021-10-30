@@ -5,6 +5,7 @@ import com.example.springdemo.domain.Employee;
 import com.example.springdemo.exception.EmployeeNotFoundException;
 import com.example.springdemo.exception.EntityIdNotExistedException;
 import com.example.springdemo.exception.EntityIdNotMatchException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -64,6 +65,8 @@ public class EmployeeService {
   }
 
   public void deleteById(long id) {
-    repo.deleteById(id);
+    try {
+      repo.deleteById(id);
+    } catch (EmptyResultDataAccessException ignored) {}
   }
 }

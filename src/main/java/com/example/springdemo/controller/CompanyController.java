@@ -2,12 +2,16 @@ package com.example.springdemo.controller;
 
 import com.example.springdemo.dto.CompanyRequest;
 import com.example.springdemo.dto.CompanyResponse;
+import com.example.springdemo.dto.EmployeeResponse;
 import com.example.springdemo.mapper.CompanyMapper;
+import com.example.springdemo.mapper.EmployeeMapper;
 import com.example.springdemo.service.CompanyService;
 import com.example.springdemo.domain.Company;
-import com.example.springdemo.domain.Employee;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/companies")
@@ -15,32 +19,43 @@ public class CompanyController {
 
   private final CompanyService service;
   private final CompanyMapper mapper;
+  private final EmployeeMapper employeeMapper;
 
   public CompanyController(CompanyService service,
-                           CompanyMapper mapper) {
+                           CompanyMapper mapper,
+                           EmployeeMapper employeeMapper) {
     this.service = service;
     this.mapper = mapper;
+    this.employeeMapper = employeeMapper;
   }
 
   @GetMapping
-  public Iterable<Company> getAll() {
-    return service.findAll();
+  public List<CompanyResponse> getAll() {
+    return mapper.fromEntity(
+      service.findAll()
+    );
   }
 
   @GetMapping("/{id}")
-  public Company getById(@PathVariable long id) {
-    return service.findById(id);
+  public CompanyResponse getById(@PathVariable long id) {
+    return mapper.fromEntity(
+      service.findById(id)
+    );
   }
 
   @GetMapping("/{id}/employees")
-  public Iterable<Employee> getAllEmployeesByCompanyId(@PathVariable long id) {
-    return service.findAllEmployeesByCompanyId(id);
+  public List<EmployeeResponse> getAllEmployeesByCompanyId(@PathVariable long id) {
+    return employeeMapper.fromEntity(
+      service.findAllEmployeesByCompanyId(id)
+    );
   }
 
   @GetMapping(params = {"page", "pageSize"})
-  public Iterable<Company> getByPage(@RequestParam int page,
-                                     @RequestParam int pageSize) {
-    return service.findByPaging(page, pageSize);
+  public Page<CompanyResponse> getByPage(@RequestParam int page,
+                                         @RequestParam int pageSize) {
+    return mapper.fromEntity(
+      service.findByPaging(page, pageSize)
+    );
   }
 
   @PostMapping
@@ -52,9 +67,11 @@ public class CompanyController {
   }
 
   @PutMapping("/{id}")
-  public Company updateCompany(@PathVariable long id,
-                               @RequestBody Company updated) {
-    return service.updateCompany(id, updated);
+  public CompanyResponse updateCompany(@PathVariable long id,
+                                       @RequestBody CompanyRequest request) {
+    Company updated = mapper.toEntity(request);
+    Company saved = service.updateCompany(id, updated);
+    return mapper.fromEntity(saved);
   }
 
   @DeleteMapping("/{id}")

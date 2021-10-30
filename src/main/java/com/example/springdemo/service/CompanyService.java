@@ -6,9 +6,14 @@ import com.example.springdemo.domain.Employee;
 import com.example.springdemo.exception.CompanyNotFoundException;
 import com.example.springdemo.exception.EntityIdNotExistedException;
 import com.example.springdemo.exception.EntityIdNotMatchException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -19,8 +24,8 @@ public class CompanyService {
     this.repo = repo;
   }
 
-  public Iterable<Company> findAll() {
-    return repo.findAll();
+  public List<Company> findAll() {
+    return (List<Company>) repo.findAll();
   }
 
   public Company findById(long id) {
@@ -29,16 +34,16 @@ public class CompanyService {
       .orElseThrow(CompanyNotFoundException::new);
   }
 
-  public Iterable<Employee> findAllEmployeesByCompanyId(long id) {
+  public List<Employee> findAllEmployeesByCompanyId(long id) {
     return findById(id).getEmployees();
   }
 
-  public Iterable<Company> findByPaging(int page,
-                                        int pageSize) {
+  public Page<Company> findByPaging(int page,
+                                    int pageSize) {
     PageRequest pageable = PageRequest
       .of(page, pageSize, Sort.by("id").ascending());
 
-    return repo.findAll(pageable).getContent();
+    return repo.findAll(pageable);
   }
 
   public Company addNewCompany(Company unsaved) {
@@ -54,14 +59,19 @@ public class CompanyService {
     if (!updated.getId().equals(pathId)) {
       throw new EntityIdNotMatchException();
     }
-    if (repo.findById(pathId).isEmpty()) {
+
+    Optional<Company> old = repo.findById(pathId);
+    if (old.isEmpty()) {
       throw new CompanyNotFoundException();
     }
 
+    updated.setEmployees(old.get().getEmployees());
     return repo.save(updated);
   }
 
   public void deleteById(long id) {
-    repo.deleteById(id);
+    try {
+      repo.deleteById(id);
+    } catch (EmptyResultDataAccessException ignored) {}
   }
 }

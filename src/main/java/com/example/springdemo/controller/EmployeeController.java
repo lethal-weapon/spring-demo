@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/employees")
@@ -27,7 +26,7 @@ public class EmployeeController {
 
   @GetMapping
   public List<EmployeeResponse> getAll() {
-    return toResponse(
+    return mapper.fromEntity(
       service.findAll()
     );
   }
@@ -41,7 +40,7 @@ public class EmployeeController {
 
   @GetMapping(params = "gender")
   public List<EmployeeResponse> getByGender(@RequestParam String gender) {
-    return toResponse(
+    return mapper.fromEntity(
       service.findByGender(gender)
     );
   }
@@ -49,7 +48,7 @@ public class EmployeeController {
   @GetMapping(params = {"page", "pageSize"})
   public Page<EmployeeResponse> getByPage(@RequestParam int page,
                                           @RequestParam int pageSize) {
-    return toResponse(
+    return mapper.fromEntity(
       service.findByPaging(page, pageSize)
     );
   }
@@ -66,25 +65,13 @@ public class EmployeeController {
   public EmployeeResponse updateEmployee(@PathVariable long id,
                                          @RequestBody EmployeeRequest request) {
     Employee updated = mapper.toEntity(request);
-    return mapper.fromEntity(
-      service.updateEmployee(id, updated)
-    );
+    Employee saved = service.updateEmployee(id, updated);
+    return mapper.fromEntity(saved);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteEmployee(@PathVariable long id) {
     service.deleteById(id);
-  }
-
-  private List<EmployeeResponse> toResponse(List<Employee> employees) {
-    return employees
-      .stream()
-      .map(mapper::fromEntity)
-      .collect(Collectors.toList());
-  }
-
-  private Page<EmployeeResponse> toResponse(Page<Employee> employees) {
-    return employees.map(mapper::fromEntity);
   }
 }

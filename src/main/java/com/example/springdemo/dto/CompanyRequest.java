@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CompanyRequest {
 
+  private Long id;
   private String name;
 
 }

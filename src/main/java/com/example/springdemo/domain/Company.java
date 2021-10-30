@@ -28,8 +28,4 @@ public class Company {
   public void addEmployee(Employee employee) {
     this.employees.add(employee);
   }
-
-  public void removeEmployee(Employee employee) {
-    this.employees.remove(employee);
-  }
 }
